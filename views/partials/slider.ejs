@@ -1,0 +1,116 @@
+<section class="hero-slider">
+    <div class="slider-wrapper">
+        <!-- Slayt 1: Kaynak Kodu -->
+        <div class="slide active" style="background-image: url('/assets/KOD urunler/slider1.png');">
+            <div class="slide-content" data-aos="fade-right">
+                <h1>Cildinizin <span>Kaynak Kodunu</span> Yenileyin.</h1>
+                <p>Bilim ve doğanın mükemmel uyumuyla hazırlanan sistem bakım üniteleri.</p>
+                <a href="#katalog" class="btn" style="text-decoration:none;">Koleksiyonu Keşfet</a>
+            </div>
+        </div>
+
+        <!-- Slayt 2: Hata Kayıtları -->
+        <div class="slide" style="background-image: url('/assets/KOD urunler/slider2.png');">
+            <div class="slide-content" data-aos="fade-right">
+                <h1>Hata Kayıtlarını <span>Silin.</span></h1>
+                <p>Beklenmedik cilt bugları için hızlı ve etkili yama çözümleri.</p>
+                <a href="#katalog" class="btn" style="text-decoration:none;">Hemen İncele</a>
+            </div>
+        </div>
+
+        <!-- Slayt 3: En Güncel Sürüm (Eksik Olan) -->
+        <div class="slide" style="background-image: url('/assets/KOD urunler/slider3.png');">
+            <div class="slide-content" data-aos="fade-right">
+                <h1>En Güncel <span>Sürüme</span> Geçin.</h1>
+                <p>Pürüzsüz bir arayüz için cildinizi her gün optimize edin.</p>
+                <a href="#katalog" class="btn" style="text-decoration:none;">Sistemi Güncelle</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kontrol Okları -->
+    <button class="slider-nav prev" id="prevBtn">&#10094;</button>
+    <button class="slider-nav next" id="nextBtn">&#10095;</button>
+</section>
+
+<style>
+    .hero-slider { 
+        position: relative; 
+        width: 100%; 
+        height: 600px; 
+        overflow: hidden; 
+        background: #f0f0f0; 
+    }
+
+    .slide {
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        opacity: 0; 
+        visibility: hidden;
+        transition: opacity 0.8s ease-in-out, visibility 0.8s;
+        background-size: cover; 
+        background-position: center;
+        display: flex; 
+        align-items: center; 
+        padding: 0 10%;
+        z-index: 1;
+    }
+
+    .slide.active { 
+        opacity: 1; 
+        visibility: visible;
+        z-index: 2;
+    }
+
+    .slider-nav {
+        position: absolute; 
+        top: 50%; 
+        transform: translateY(-50%);
+        background: rgba(255,255,255,0.8); 
+        border: none; 
+        width: 50px; 
+        height: 50px;
+        cursor: pointer; 
+        font-size: 20px; 
+        z-index: 10; 
+        border-radius: 50%; 
+        color: var(--deep-purple);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+    .slider-nav:hover { background: white; scale: 1.1; }
+    .prev { left: 30px; } 
+    .next { right: 30px; }
+</style>
+
+<script>
+    (function() {
+        const slides = document.querySelectorAll('.slide');
+        const nextBtn = document.getElementById('nextBtn');
+        const prevBtn = document.getElementById('prevBtn');
+        let currentSlide = 0;
+        let slideInterval;
+
+        function showSlide(index) {
+            slides.forEach(s => s.classList.remove('active'));
+            currentSlide = (index + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        function nextSlide() { showSlide(currentSlide + 1); }
+        function prevSlide() { showSlide(currentSlide - 1); }
+
+        nextBtn.addEventListener('click', () => { nextSlide(); resetTimer(); });
+        prevBtn.addEventListener('click', () => { prevSlide(); resetTimer(); });
+
+        function startTimer() { slideInterval = setInterval(nextSlide, 5000); }
+        function resetTimer() { clearInterval(slideInterval); startTimer(); }
+
+        startTimer();
+    })();
+</script>

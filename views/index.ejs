@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>KOD | Organik Sistem Bakımı</title>
+    <!-- CSS ve Fontlar buraya gelecek -->
+    <%- include('partials/head-styles') %>
+</head>
+<body>
+
+<!-- Üst Menü -->
+<%- include('partials/header') %>
+
+<main>
+    <!-- Slider Alanı -->
+    <%- include('partials/slider') %>
+    
+    <!-- ÜRÜNLER ALANI: id="katalog" eklenerek slider butonları buraya bağlandı -->
+    <div id="katalog" class="grid">
+        <% products.forEach((product) => { %>
+            <!-- Her bir ürün kartı parçası -->
+            <%- include('partials/product-card', {product: product}) %>
+        <% }) %>
+    </div>
+</main>
+
+<!-- Giriş, Kayıt ve Sepet Çekmeceleri -->
+<%- include('partials/drawers') %>
+
+<!-- JS Fonksiyonları ve AOS Scriptleri -->
+<%- include('partials/footer') %>
+
+</body>
+</html>

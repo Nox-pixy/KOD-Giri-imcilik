@@ -1,0 +1,57 @@
+<!-- Ödeme Sayfası Modal -->
+<div id="checkoutModal" class="checkout-modal" style="display:none;">
+    <div class="checkout-content">
+        <div class="checkout-header">
+            <h2>Sipariş Detayları</h2>
+            <span class="close-checkout" onclick="closeCheckout()">&times;</span>
+        </div>
+        
+        <div class="checkout-body">
+            <!-- Sol: Form Bilgileri -->
+            <div class="checkout-form-section">
+                <h3>Teslimat ve Ödeme</h3>
+                <form id="orderForm" onsubmit="processOrder(event)">
+                    <div class="input-group">
+                        <input type="text" placeholder="Tam Adınız" required>
+                    </div>
+                    <div class="input-group">
+                        <textarea placeholder="Teslimat Adresi" required style="width: 100%; height: 80px; padding: 15px; border-radius: 12px; border: 1.5px solid #eee; font-family: 'Poppins';"></textarea>
+                    </div>
+                    <div class="card-info" style="display: flex; gap: 10px; margin-top: 10px;">
+                        <input type="text" placeholder="Kart No (16 Hane)" style="flex: 2; padding: 15px; border-radius: 12px; border: 1.5px solid #eee;">
+                        <input type="text" placeholder="CVC" style="flex: 1; padding: 15px; border-radius: 12px; border: 1.5px solid #eee;">
+                    </div>
+                    <button type="submit" class="btn btn-full" style="background: var(--deep-purple); color: white; margin-top: 20px;">Siparişi Tamamla</button>
+                </form>
+            </div>
+
+            <!-- Sağ: Sipariş Özeti -->
+            <div class="checkout-summary-section">
+                <h3>Özet</h3>
+                <div id="checkoutSummaryList"></div>
+                <hr style="border: 0.5px solid #eee; margin: 15px 0;">
+                <div style="display: flex; justify-content: space-between; font-weight: 700; font-size: 20px;">
+                    <span>Toplam:</span>
+                    <span id="checkoutTotalText" style="color: var(--accent-purple);">0 TL</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .checkout-modal {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(255,255,255,0.98); z-index: 3000;
+        display: flex; align-items: center; justify-content: center;
+        backdrop-filter: blur(10px);
+    }
+    .checkout-content {
+        width: 90%; max-width: 1000px; background: white; padding: 40px;
+        border-radius: 30px; box-shadow: 0 30px 60px rgba(0,0,0,0.1);
+    }
+    .checkout-header { display: flex; justify-content: space-between; margin-bottom: 30px; }
+    .checkout-body { display: grid; grid-template-columns: 1.5fr 1fr; gap: 40px; }
+    .close-checkout { font-size: 40px; cursor: pointer; color: #ccc; }
+    .checkout-summary-section { background: #fbf9ff; padding: 25px; border-radius: 20px; }
+</style>

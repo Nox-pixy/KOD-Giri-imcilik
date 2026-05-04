@@ -1,0 +1,242 @@
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;600&family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+<!-- AOS (Animate on Scroll) Kütüphanesi -->
+<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+<!-- Logo/Favicon -->
+<link rel="icon" type="image/jpeg" href="/assets/KOD urunler/logo.jpeg">
+
+<style>
+    /* Renk ve Stil Değişkenleri */
+    :root {
+        --soft-lila: #fdfaff;
+        --mid-lila: #f3e8ff;
+        --deep-purple: #8b5cf6;
+        --accent-purple: #7c3aed;
+        --text-main: #2d2d2d;
+        --border-radius: 40px;
+    }
+
+    /* Genel Gövde Stili */
+    body { 
+        margin: 0; 
+        font-family: 'Poppins', sans-serif; 
+        background: #fff; 
+        color: var(--text-main); 
+        overflow-x: hidden; 
+    }
+
+    /* Üst Menü (Sticky Header) */
+    header {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 10px 5%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        box-shadow: 0 2px 20px rgba(139, 92, 246, 0.05);
+    }
+
+    /* Logo Boyutu */
+    .main-logo { 
+        height: 70px; 
+        width: auto; 
+        transition: transform 0.3s ease; 
+    }
+    .main-logo:hover { transform: scale(1.05); }
+
+    /* Minimal Mor Arama Çubuğu Tasarımı */
+    .search-container { 
+        flex: 2; 
+        display: flex; 
+        justify-content: center; 
+        padding: 0 20px; 
+    }
+    .search-wrapper { 
+        position: relative; 
+        width: 100%; 
+        max-width: 450px; 
+    }
+    .search-input {
+        width: 100%; 
+        padding: 12px 20px 12px 45px; 
+        border-radius: 30px;
+        border: 1.5px solid var(--deep-purple); 
+        outline: none; 
+        font-family: 'Poppins';
+        font-size: 14px;
+        transition: box-shadow 0.3s ease;
+    }
+    .search-input:focus { box-shadow: 0 0 10px rgba(139, 92, 246, 0.2); }
+    
+    /* Arama İkonu (⚲ - Minimalist Mor İkon) */
+    .search-icon { 
+        position: absolute; 
+        left: 18px; 
+        top: 50%; 
+        transform: translateY(-50%); 
+        color: var(--deep-purple); 
+        font-size: 18px; 
+        font-weight: bold;
+        pointer-events: none; 
+    }
+
+    /* Navigasyon Linkleri ve Butonlar */
+    nav { 
+        flex: 1; 
+        display: flex; 
+        align-items: center; 
+        justify-content: flex-end; 
+    }
+    nav a, .drawer-trigger {
+        text-decoration: none; 
+        color: #555; 
+        margin-left: 20px;
+        font-size: 13px; 
+        font-weight: 600; 
+        text-transform: uppercase;
+        cursor: pointer; 
+        background: none; 
+        border: none; 
+        font-family: 'Poppins';
+        position: relative;
+    }
+    nav a::after, .drawer-trigger::after {
+        content: ''; 
+        position: absolute; 
+        width: 0; 
+        height: 2px; 
+        bottom: -5px; 
+        left: 0; 
+        background: var(--deep-purple); 
+        transition: 0.3s;
+    }
+    nav a:hover::after, .drawer-trigger:hover::after { width: 100%; }
+
+    /* Slider Buzlu Cam (Glassmorphism) Kutusu */
+    .slide-content {
+        max-width: 650px;
+        z-index: 2;
+        background: rgba(255, 255, 255, 0.45);
+        padding: 40px;
+        border-radius: 30px;
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        box-shadow: 0 8px 32px 0 rgba(139, 92, 246, 0.1);
+    }
+    .slide-content h1 { font-family: 'Montserrat', sans-serif; font-size: 45px; margin-bottom: 20px; }
+    .slide-content h1 span { color: var(--deep-purple); }
+
+    /* Çekmeceler (Drawers) ve Karartma (Overlay) */
+    .overlay {
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%;
+        background: rgba(0, 0, 0, 0.4); 
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        z-index: 2000; 
+        display: none; 
+        opacity: 0; 
+        transition: opacity 0.4s ease;
+    }
+    .overlay.active { display: block; opacity: 1; }
+
+    .drawer {
+        position: fixed; 
+        top: 0; 
+        right: -450px; 
+        width: 380px; 
+        height: 100%;
+        background: white; 
+        z-index: 2001; 
+        box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+        padding: 40px; 
+        display: flex; 
+        flex-direction: column;
+        transition: right 0.4s cubic-bezier(0.82, 0.01, 0.77, 0.41);
+    }
+    .drawer.active { right: 0; }
+    .close-drawer { 
+        align-self: flex-end; 
+        font-size: 24px; 
+        cursor: pointer; 
+        color: var(--deep-purple); 
+        margin-bottom: 20px; 
+    }
+
+    /* Ürün Izgarası (Grid) ve Kartlar */
+    .grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+        gap: 40px; 
+        padding: 50px 8%; 
+    }
+    .card { 
+        background: white; 
+        border-radius: var(--border-radius); 
+        padding: 20px; 
+        text-align: center; 
+        border: 1px solid #f0f0f0; 
+        transition: 0.4s ease; 
+    }
+    .card:hover { 
+        transform: translateY(-10px); 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.05); 
+    }
+    .img-wrapper { 
+        width: 100%; 
+        height: 260px; 
+        border-radius: 25px; 
+        overflow: hidden; 
+        margin-bottom: 20px; 
+    }
+    .img-wrapper img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* Buton Tasarımları */
+    .btn {
+        background: var(--soft-lila); 
+        color: var(--accent-purple); 
+        padding: 12px 25px;
+        border-radius: 20px; 
+        font-weight: 600; 
+        border: none; 
+        cursor: pointer; 
+        transition: 0.3s;
+        font-family: 'Poppins';
+    }
+    .btn:hover { 
+        background: var(--deep-purple) !important; 
+        color: white !important; 
+    }
+
+    /* Sepet Rozeti (Badge) */
+    .cart-wrapper { 
+        position: relative; 
+        margin-left: 20px; 
+        cursor: pointer; 
+        font-size: 24px; 
+    }
+    .cart-badge {
+        position: absolute; 
+        top: -5px; 
+        right: -10px; 
+        background: var(--deep-purple);
+        color: white; 
+        font-size: 10px; 
+        width: 20px; 
+        height: 20px; 
+        border-radius: 50%;
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+        font-weight: bold; 
+        border: 2px solid white;
+    }
+</style>
