@@ -2,40 +2,170 @@
 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
 
 <script>
-    // 1. Animasyonları Başlat
-    AOS.init({ duration: 1000, once: true });
+    /**
+     * KOD. İşletim Sistemi - Çekirdek Script Yazılımı v2.2 (İptal Talebi Mantığı)
+     */
 
-    /* --- Çekmece (Panel) Yönetimi --- */
-    function openLogin() { closeAll(); document.getElementById('overlay').classList.add('active'); document.getElementById('loginDrawer').classList.add('active'); }
-    function openRegister() { closeAll(); document.getElementById('overlay').classList.add('active'); document.getElementById('registerDrawer').classList.add('active'); }
-    function openCart() { closeAll(); document.getElementById('overlay').classList.add('active'); document.getElementById('cartDrawer').classList.add('active'); }
-    
+    // 1. Animasyon Motorunu Başlat
+    if (typeof AOS !== 'undefined') { 
+        AOS.init({ duration: 1000, once: true }); 
+    }
+
+    /* --- PANEL VE ÇEKMECE YÖNETİM SİSTEMİ --- */
     function closeAll() {
-        ['loginDrawer', 'registerDrawer', 'cartDrawer'].forEach(id => {
+        const drawers = ['loginDrawer', 'registerDrawer', 'cartDrawer', 'accountDrawer'];
+        drawers.forEach(id => {
             const el = document.getElementById(id);
             if(el) el.classList.remove('active');
         });
         const overlay = document.getElementById('overlay');
-        if(overlay) overlay.classList.remove('active');
+        if(overlay) {
+            overlay.classList.remove('active');
+            overlay.style.display = 'none'; 
+        }
     }
 
-    if(document.getElementById('overlay')) {
-        document.getElementById('overlay').onclick = closeAll;
+    function openLogin() { 
+        closeAll(); 
+        const ov = document.getElementById('overlay');
+        const dr = document.getElementById('loginDrawer');
+        if(ov) { ov.style.display = 'block'; setTimeout(() => ov.classList.add('active'), 10); }
+        if(dr) dr.classList.add('active'); 
     }
 
-    /* --- Akıllı Arama Motoru --- */
+    function openRegister() { 
+        closeAll(); 
+        const ov = document.getElementById('overlay');
+        const dr = document.getElementById('registerDrawer');
+        if(ov) { ov.style.display = 'block'; setTimeout(() => ov.classList.add('active'), 10); }
+        if(dr) dr.classList.add('active'); 
+    }
+
+    function openCart() { 
+        closeAll(); 
+        const ov = document.getElementById('overlay');
+        const dr = document.getElementById('cartDrawer');
+        if(ov) { ov.style.display = 'block'; setTimeout(() => ov.classList.add('active'), 10); }
+        if(dr) dr.classList.add('active'); 
+        updateCartDrawer(); 
+    }
+    
+    function openAccount() { 
+        closeAll(); 
+        const ov = document.getElementById('overlay');
+        const dr = document.getElementById('accountDrawer');
+        if(ov) { ov.style.display = 'block'; setTimeout(() => ov.classList.add('active'), 10); }
+        if(dr) dr.classList.add('active');
+        populateAccountPage();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        const overlay = document.getElementById('overlay');
+        if(overlay) overlay.onclick = closeAll;
+    });
+
+    /* --- AKILLI ARAMA MOTORU --- */
     function searchProducts() {
         const input = document.getElementById('searchInput').value.toLowerCase().trim();
         const cards = document.getElementsByClassName('product-card');
         for (let card of cards) {
             const name = card.getAttribute('data-name') || "";
             const type = card.getAttribute('data-type') || "";
-            card.style.display = (input === "" || name.includes(input) || type.includes(input)) ? "block" : "none";
+            if (input === "" || name.toLowerCase().includes(input) || type.toLowerCase().includes(input)) {
+                card.style.display = "flex"; 
+            } else {
+                card.style.display = "none";
+            }
         }
     }
 
-    /* --- Fiyat Entegrasyonlu Sepet Yönetimi --- */
-    let cart = []; 
+    /* --- ÜRÜN VERİ TABANI --- */
+    const allProductsData = [
+        { name: "Print(Growth Restore)", type: "Kaş ve Kirpik serumu ", price: 310, image: "KOD urunler/print  growth restore.png", description: "Kıl köklerini uyararak daha gür ve uzun bir görünüm sağlayan özel formül.", details: "Provitamin B5, Keratin, Peptit Kompleksi", usage: "Temiz kirpik diplerine günde bir kez uygulayın." },
+        { name: "Print(Reset)", type: "Yüz Temizleme Jeli", price: 345, image: "KOD urunler/print (reset).jpeg", description: "Cildi kurutmadan gözenekleri derinlemesine temizleyen arındırıcı jel.", details: "%2 Salisilik Asit, Çay Ağacı Yağı", usage: "Islak cilde masaj yaparak uygulayın ve durulayın." },
+        { name: "Print(Cache Reset)", type: "Kuru Şampuan", price: 320, image: "KOD urunler/print cache reset.png", description: "Yıkama gerektirmeden saçtaki yağı anında absorbe eden formül.", details: "Pirinç Nişastası, Canlandırıcı Koku Özleri", usage: "20 cm uzaktan saç diplerine sıkın ve tarayın." },
+        { name: "Print(Clear Cache)", type: "Diş Macunu", price: 190, image: "KOD urunler/print clear cache.png", description: "Plak oluşumunu engelleyen ve doğal beyazlık sağlayan gelişmiş koruma.", details: "Florür, Nane Özü, Beyazlatıcı Kristaller", usage: "Günde en az iki kez fırçalayın." },
+        { name: "Print(Cloude Storage)", type: "Nemlendirici", price: 310, image: "KOD urunler/print cloude storage.png", description: "Cildin nem bariyerini güçlendiren 24 saat etkili depolama sistemi.", details: "Hiyalüronik Asit, Seramidler, Aloe Vera", usage: "Temizlenmiş yüze sabah ve akşam uygulayın." },
+        { name: "Print(Drag and Drop)", type: "Saç Kremi", price: 215, image: "KOD urunler/print drag and drop.jpeg", description: "Saçları yumuşatan ve kolay taranmasını sağlayan hafif yapılı bakım.", details: "Argan Yağı, İpek Proteini", usage: "Şampuan sonrası uçlara uygulayın, 2 dakika bekletip durulayın." },
+        { name: "Print(Factory Reset)", type: "Yüz Maskesi", price: 220, image: "KOD urunler/print factory reset.jpeg", description: "Cildi ölü deriden arındırarak pürüzsüz bir doku kazandırır.", details: "Kaolin Kili, AHA/BHA Asitleri", usage: "Haftada 2 kez uygulayıp 10 dakika bekletin." },
+        { name: "Print(Firewall)", type: "Güneş Kremi", price: 350, image: "KOD urunler/print firewall.jpeg", description: "Güneşin zararlı ışınlarına karşı yüksek spektrumlu güvenlik duvarı.", details: "SPF 50+, Çinko Oksit, E Vitamini", usage: "Güneşe çıkmadan 20 dakika önce uygulayın." },
+        { name: "Print(Hotfix)", type: "Sivilce Patcher", price: 275, image: "KOD urunler/print hotfix.png", description: "Sivilceleri kısa sürede kurutan şeffaf hidrokolloid yamalar.", details: "Çay Ağacı Yağı, Hidrokolloid", usage: "Sorunlu bölgeye yapıştırın ve 6-8 saat bekletin." },
+        { name: "Print(Hotfixx)", type: "Şampuan", price: 320, image: "KOD urunler/print hotfixx.png", description: "Saç dökülmesine karşı güçlendirici temizlik ve onarım.", details: "Biotin, Kafein, Isırgan Özü", usage: "Islak saça masajla uygulayıp durulayın." },
+        { name: "Print(Light Mode)", type: "Ayınlatıcı Serum", price: 295, image: "KOD urunler/print light mode.jpeg", description: "Cilt tonunu eşitleyen ve ışıltı veren aydınlatıcı kompleks.", details: "C Vitamini, Meyan Kökü Özü", usage: "Geceleri 3-4 damla temiz cilde uygulayın." },
+        { name: "Print(Nail Rescue)", type: "Tırnak Bakımı", price: 180, image: "KOD urunler/print nail rescue.png", description: "Zayıf ve kırılgan tırnakları güçlendiren yoğun bakım yağı.", details: "E Vitamini, Tatlı Badem Yağı", usage: "Tırnak ve etlerine masaj yaparak uygulayın." },
+        { name: "Print(Optimizer)", type: "Gündüz Kremi", price: 290, image: "KOD urunler/print optimizer.png", description: "Hava kirliliğine karşı koruyan ve enerji veren günlük bakım.", details: "Q10 Enzimi, Yeşil Çay Özü", usage: "Sabahları temizlenmiş yüze uygulayın." },
+        { name: "Print(Outo-Save)", type: "Yaşlanma Karşıtı Krem", price: 365, image: "KOD urunler/print outo-save.png", description: "İnce çizgilerin görünümünü azaltan zaman durdurucu bakım.", details: "Retinol, Kolajen, Peptitler", usage: "Geceleri tüm yüze dairesel hareketlerle uygulayın." },
+        { name: "Print(Refresh)", type: "Canlandırıcı Tonik", price: 325, image: "KOD urunler/print refresh.jpeg", description: "PH dengesini sağlayan ve gözenekleri sıkılaştıran ferahlık.", details: "Gül Suyu, Hamamelis Özü", usage: "Pamuk yardımıyla cildi silin." },
+        { name: "Print(Sweet Bliss)", type: "Duak Balmı", price: 245, image: "KOD urunler/print sweet bliss.png", description: "Çatlamış dudakları anında onaran ve nemlendiren yumuşaklık.", details: "Shea Yağı, Balmumu, Meyve Özleri", usage: "İhtiyaç duydukça dudaklarınıza sürün." },
+        { name: "Print(Update)", type: "Kolojenli Serum", price: 210, image: "KOD urunler/print update.png", description: "Elastikiyeti artıran ve cildi sıkılaştıran kolajen takviyesi.", details: "Hidrolize Kolajen, Elastin", usage: "Sabah akşam nemlendirici öncesi uygulayın." },
+        { name: "Print(Upload)", type: "Peeling", price: 235, image: "KOD urunler/print upload.jpeg", description: "Fiziksel partiküllerle cildi yenileyen mikro-peeling.", details: "Kayısı Çekirdeği Tozu, Kil", usage: "Haftalık kullanımda nazikçe ovalayıp yıkayın." },
+        { name: "Print(Debug)", type: "Arındırıcı Tonik", price: 205, image: "KOD urunler/print(debug).jpeg", description: "Yağlı ciltler için sebum dengeleyici ve matlaştırıcı çözüm.", details: "Cadı Fındığı, Salisilik Asit", usage: "T bölgesine ağırlık vererek uygulayın." },
+        { name: "Print(Loading)", type: "Yüz Maskesi", price: 315, image: "KOD urunler/print(loading).jpeg", description: "Yorgun cildi anında canlandıran vitamin deposu maske.", details: "Multivitamin Kompleksi, Panthenol", usage: "Kalın bir tabaka sürüp 15 dakika sonra yıkayın." },
+        { name: "Print(Sleep)", type: "Gece Kremi", price: 340, image: "KOD urunler/print(sleep).jpeg", description: "Siz uyurken hücre yenilenmesini destekleyen yoğun gece bakımı.", details: "Gece Çuha Çiçeği Yağı, Squalane", usage: "Yatmadan önce temiz cilde uygulayın." },
+        { name: "Print(Datafresh)", type: "Duş Jeli", price: 315, image: "KOD urunler/prit datafresh.png", description: "Uzun süre kalıcı koku ve ferahlık sağlayan temizleyici.", details: "Okyanus Mineralleri, Nemlendirici Süt", usage: "Banyo sırasında tüm vücuda uygulayın." }
+    ];
+
+    /* --- ÜRÜN İNCELEME MODALI VE BENZER ALGORİTMALAR --- */
+    function openProductDetail(productName) {
+        const product = allProductsData.find(p => p.name === productName);
+        if (!product) return;
+        
+        closeAll(); 
+
+        document.getElementById('productDetailBody').innerHTML = `
+            <div class="detail-image" data-aos="fade-right"><img src="/assets/${product.image}" style="width:100%; border-radius:20px;"></div>
+            <div class="detail-info" data-aos="fade-left">
+                <span style="color:var(--deep-purple); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px;">${product.type}</span>
+                <h2 style="font-family:'Montserrat'; margin:15px 0; font-size:28px; font-weight:800;">${product.name}</h2>
+                <div style="font-size:24px; font-weight:700; color:var(--accent-purple); margin-bottom:20px;">${product.price} TL</div>
+                <p style="color:#666; line-height:1.6;">${product.description}</p>
+                <div style="display:flex; gap:20px; border-bottom:1px solid #eee; margin-bottom:15px; margin-top:20px;">
+                    <button onclick="switchTab('specs')" id="tab-specs" style="background:none; border:none; padding-bottom:10px; border-bottom:2px solid var(--deep-purple); cursor:pointer; font-weight:600;">Özellikler</button>
+                    <button onclick="switchTab('usage')" id="tab-usage" style="background:none; border:none; padding-bottom:10px; cursor:pointer; color:#999;">Kullanım</button>
+                </div>
+                <div id="tab-content" style="font-size:14px; color:#555; min-height:80px;">${product.details}</div>
+                <button class="btn btn-full" onclick="addToCart('${product.name}', ${product.price}); closeProductDetail(); openCart();" style="background:var(--deep-purple); color:white; margin-top:30px; width:100%; border-radius:15px; cursor:pointer; font-weight:600; padding:18px;">Sepete Ekle</button>
+            </div>
+        `;
+
+        const similarProducts = allProductsData.filter(p => p.name !== product.name).sort(() => 0.5 - Math.random()).slice(0, 4);
+        const similarGrid = document.getElementById('similarProductsGrid');
+        if(similarGrid) {
+            similarGrid.innerHTML = similarProducts.map(p => `
+                <div onclick="openProductDetail('${p.name}')" style="background:white; padding:15px; border-radius:20px; cursor:pointer; border:1px solid #f0f0f0; transition:0.3s; text-align:center;">
+                    <img src="/assets/${p.image}" style="width:100%; height:120px; object-fit:contain; border-radius:12px; margin-bottom:10px;">
+                    <div style="font-weight:600; font-size:12px; color:var(--text-main); height:35px; overflow:hidden;">${p.name}</div>
+                    <div style="color:var(--accent-purple); font-weight:700; font-size:13px; margin-top:5px;">${p.price} TL</div>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('productDetailModal').style.display = 'flex';
+        window.activeProduct = product;
+    }
+
+    function switchTab(type) {
+        const content = document.getElementById('tab-content');
+        if (!window.activeProduct || !content) return;
+        if (type === 'specs') {
+            content.innerText = window.activeProduct.details;
+            document.getElementById('tab-specs').style.borderBottom = "2px solid var(--deep-purple)";
+            document.getElementById('tab-specs').style.color = "#333";
+            document.getElementById('tab-usage').style.borderBottom = "none";
+            document.getElementById('tab-usage').style.color = "#999";
+        } else {
+            content.innerText = window.activeProduct.usage;
+            document.getElementById('tab-usage').style.borderBottom = "2px solid var(--deep-purple)";
+            document.getElementById('tab-usage').style.color = "#333";
+            document.getElementById('tab-specs').style.borderBottom = "none";
+            document.getElementById('tab-specs').style.color = "#999";
+        }
+    }
+
+    function closeProductDetail() { document.getElementById('productDetailModal').style.display = 'none'; }
+
+    /* --- SEPET YÖNETİMİ --- */
+    let cart = JSON.parse(sessionStorage.getItem('myCart')) || []; 
 
     function handleCartClick(btn) {
         const name = btn.getAttribute('data-product-name');
@@ -45,217 +175,216 @@
 
     function addToCart(name, price) {
         const numericPrice = Number(price);
-        if (isNaN(numericPrice)) {
-            console.error("Geçersiz fiyat verisi!");
-            return;
-        }
+        if (isNaN(numericPrice)) return;
         cart.push({ name: name, price: numericPrice });
-        const badge = document.getElementById('cartCount');
-        if(badge) {
-            badge.innerText = cart.length;
-            badge.style.transform = "scale(1.5)";
-            setTimeout(() => badge.style.transform = "scale(1)", 200);
-        }
+        sessionStorage.setItem('myCart', JSON.stringify(cart)); 
         updateCartDrawer();
     }
 
     function updateCartDrawer() {
         const list = document.getElementById('cartItemsList');
         const footer = document.getElementById('cartFooter');
-        const totalDisplay = document.getElementById('cartTotal'); 
-        const authSection = document.getElementById('cartAuthSection');
+        const badge1 = document.getElementById('cartCount');
+        const badge2 = document.getElementById('modalCartCount');
+        
+        if(badge1) badge1.innerText = cart.length;
+        if(badge2) badge2.innerText = cart.length;
 
         if (!list) return;
         if (cart.length === 0) {
-            list.innerHTML = '<p class="empty-cart-msg">Sepetiniz henüz boş.</p>';
+            list.innerHTML = '<p class="empty-cart-msg">Sepetiniz boş.</p>';
             if(footer) footer.style.display = 'none';
         } else {
-            const totalAmount = cart.reduce((total, item) => total + item.price, 0);
             list.innerHTML = cart.map((item, index) => `
-                <div style="display:flex; justify-content:space-between; align-items:center; padding:18px 0; border-bottom:1px solid #f8f1ff;">
+                <div style="display:flex; justify-content:space-between; align-items:center; padding:15px 0; border-bottom:1px solid #f8f1ff;">
                     <div style="text-align: left;">
-                        <span style="font-size:14px; font-weight:600; display:block; color:var(--text-main); margin-bottom:4px;">${item.name}</span>
-                        <span style="font-size:13px; color:var(--accent-purple); font-weight:700;">${item.price.toLocaleString('tr-TR')} TL</span>
+                        <span style="font-size:13px; font-weight:600; color:#333;">${item.name}</span>
+                        <span style="font-size:12px; color:var(--accent-purple); display:block;">${item.price} TL</span>
                     </div>
-                    <button onclick="removeFromCart(${index})" style="background: #fff0f0; color: #ff4d4d; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer;">&times;</button>
+                    <button onclick="removeFromCart(${index})" style="background:#fff0f0; color:#ff4d4d; border:none; width:28px; height:28px; border-radius:50%; cursor:pointer;">&times;</button>
                 </div>
             `).join('');
             
             if(footer) {
                 footer.style.display = 'block';
-                if(totalDisplay) totalDisplay.innerText = totalAmount.toLocaleString('tr-TR') + ' TL';
+                document.getElementById('cartTotal').innerText = cart.reduce((t, i) => t + i.price, 0) + " TL";
                 
-                // Kullanıcı giriş yapmamışsa seçim kısmını sepet içinde göster
                 const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
-                if (authSection) authSection.style.display = user ? 'none' : 'block';
+                const isGuest = sessionStorage.getItem('isGuest');
+                const authSection = document.getElementById('cartAuthSection');
+                const checkoutBtn = document.getElementById('cartCheckoutBtn');
+
+                if(authSection && checkoutBtn) {
+                    if (user || isGuest) {
+                        authSection.style.display = 'none';
+                        checkoutBtn.style.display = 'block';
+                    } else {
+                        authSection.style.display = 'block';
+                        checkoutBtn.style.display = 'none';
+                    }
+                }
             }
         }
     }
 
     function removeFromCart(index) {
         cart.splice(index, 1);
-        const badge = document.getElementById('cartCount');
-        if(badge) badge.innerText = cart.length;
+        sessionStorage.setItem('myCart', JSON.stringify(cart));
         updateCartDrawer();
     }
 
-    /* --- ÜRÜN İNCELEME (DETAY) SİSTEMİ & BENZER ÜRÜNLER --- */
-    function openProductDetail(productName) {
-        // EJS verilerini globalden veya EJS'den çek
-        const allProducts = <%- JSON.stringify(products) %>;
-        const product = allProducts.find(p => p.name === productName);
-        if (!product) return;
-
-        // Modal içeriğini doldururken Header'ı manuel basmak yerine drawers.ejs'deki sabit yapıyı kullanıyoruz
-        // Sadece Body kısmını güncelliyoruz
-        document.getElementById('productDetailBody').innerHTML = `
-            <div class="detail-image">
-                <img src="/assets/${product.image}" alt="${product.name}" style="width:100%; border-radius:20px; box-shadow: 0 10px 30px rgba(0,0,0,0.05);">
-            </div>
-            <div class="detail-info" style="text-align:left;">
-                <span style="color:var(--deep-purple); font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:1px;">${product.type}</span>
-                <h2 style="font-family:'Montserrat'; margin:15px 0; font-size:28px; font-weight:700;">${product.name}</h2>
-                <div style="font-size:24px; font-weight:700; color:var(--accent-purple); margin-bottom:20px;">${product.price} TL</div>
-                <p style="color:#666; line-height:1.6; margin-bottom:25px;">${product.description || 'Açıklama bulunmuyor.'}</p>
-                <div class="detail-tabs" style="display:flex; gap:20px; border-bottom:1px solid #eee; margin-bottom:15px;">
-                    <button onclick="switchTab('specs')" id="tab-specs" style="background:none; border:none; padding-bottom:10px; border-bottom:2px solid var(--deep-purple); cursor:pointer; font-weight:600;">Özellikler</button>
-                    <button onclick="switchTab('usage')" id="tab-usage" style="background:none; border:none; padding-bottom:10px; cursor:pointer; color:#999;">Kullanım</button>
-                </div>
-                <div id="tab-content" style="font-size:14px; color:#555; min-height:80px;">${product.details || 'Detay bilgisi yok.'}</div>
-                <button class="btn btn-full" onclick="addToCart('${product.name}', ${product.price})" style="background:var(--deep-purple); color:white; margin-top:30px; width:100%; height:55px; border-radius:15px;">Sepete Ekle</button>
-            </div>
-        `;
-
-        // Benzer Ürünler
-        const similarProducts = allProducts.filter(p => p.type === product.type && p.name !== product.name).slice(0, 4);
-        const similarGrid = document.getElementById('similarProductsGrid');
-        if(similarGrid) {
-            similarGrid.innerHTML = similarProducts.map(p => `
-                <div onclick="openProductDetail('${p.name}')" style="background:white; padding:15px; border-radius:20px; cursor:pointer; border:1px solid #f0f0f0;">
-                    <img src="/assets/${p.image}" style="width:100%; height:100px; object-fit:cover; border-radius:12px; margin-bottom:10px;">
-                    <div style="font-weight:600; font-size:12px; color:var(--text-main);">${p.name}</div>
-                    <div style="color:var(--accent-purple); font-weight:700; font-size:13px;">${p.price} TL</div>
-                </div>
-            `).join('');
-        }
-
-        document.getElementById('productDetailModal').style.display = 'flex';
-        document.getElementById('productDetailModal').scrollTop = 0;
-        window.activeProduct = product;
-    }
-
-    function switchTab(type) {
-        const content = document.getElementById('tab-content');
-        const specsBtn = document.getElementById('tab-specs');
-        const usageBtn = document.getElementById('tab-usage');
-        if (type === 'specs') {
-            content.innerText = window.activeProduct.details;
-            specsBtn.style.borderBottom = "2px solid var(--deep-purple)";
-            specsBtn.style.color = "inherit";
-            usageBtn.style.borderBottom = "none";
-            usageBtn.style.color = "#999";
-        } else {
-            content.innerText = window.activeProduct.usage;
-            usageBtn.style.borderBottom = "2px solid var(--deep-purple)";
-            usageBtn.style.color = "inherit";
-            specsBtn.style.borderBottom = "none";
-            specsBtn.style.color = "#999";
-        }
-    }
-
-    function closeProductDetail() {
-        document.getElementById('productDetailModal').style.display = 'none';
-    }
-
-    /* --- ÖDEME SAYFASI (CHECKOUT) & AUTH KÖPRÜSÜ --- */
+    /* --- ÖDEME VE SİPARİŞ GEÇMİŞİ --- */
     function openCheckout() {
         const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
-        const isGuest = sessionStorage.getItem('isGuest');
-
-        if (cart.length === 0) {
-            alert("Önce sepetinize ürün eklemelisiniz.");
-            return;
-        }
-
-        // Giriş yapılmamışsa VE misafir olarak devam edilmemişse sepeti açık tut ve uyar
-        if (!user && !isGuest) {
-            alert("Ödemeye geçmek için lütfen giriş yapın veya misafir olarak devam edin.");
-            openCart();
-            return;
-        }
-
+        if (cart.length === 0) return;
+        if (!user && !sessionStorage.getItem('isGuest')) { openLogin(); return; }
+        
         closeAll();
         document.getElementById('checkoutModal').style.display = 'flex';
-        updateCheckoutSummary();
-    }
-
-    function continueAsGuest() {
-        sessionStorage.setItem('isGuest', 'true');
-        document.getElementById('cartAuthSection').style.display = 'none';
-        alert("Misafir olarak devam ediliyor. Şimdi 'Ödemeye Geç' butonuna basabilirsiniz.");
-    }
-
-    function updateCheckoutSummary() {
-        const summaryList = document.getElementById('checkoutSummaryList');
-        const totalText = document.getElementById('checkoutTotalText');
-        summaryList.innerHTML = cart.map(item => `
-            <div style="display:flex; justify-content:space-between; margin-bottom:12px; font-size:14px;">
-                <span style="color:#555;">${item.name}</span>
-                <span style="font-weight:600; color:var(--text-main);">${item.price.toLocaleString('tr-TR')} TL</span>
-            </div>
-        `).join('');
-        const totalAmount = cart.reduce((total, item) => total + item.price, 0);
-        totalText.innerText = totalAmount.toLocaleString('tr-TR') + ' TL';
-    }
-
-    function closeCheckout() {
-        document.getElementById('checkoutModal').style.display = 'none';
+        const total = cart.reduce((t, i) => t + i.price, 0);
+        document.getElementById('checkoutSummaryList').innerHTML = cart.map(i => `<div style="display:flex; justify-content:space-between; margin-bottom:10px;"><span>${i.name}</span><strong>${i.price} TL</strong></div>`).join('');
+        document.getElementById('checkoutTotalText').innerText = total + " TL";
+        if(user) document.getElementById('checkoutName').value = user.fullName;
     }
 
     function processOrder(event) {
         event.preventDefault();
         const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
-        const totalAmount = cart.reduce((total, item) => total + item.price, 0);
-        
-        alert("🚀 Siparişiniz başarıyla alındı! KOD ekibi sistem verilerini işlemeye başladı.");
-        cart = [];
-        const badge = document.getElementById('cartCount');
-        if(badge) badge.innerText = "0";
-        updateCartDrawer();
-        closeCheckout();
-        sessionStorage.removeItem('isGuest'); // Sipariş bitince misafir durumunu sıfırla
+        const address = event.target.address.value;
+        const totalAmount = cart.reduce((t, i) => t + i.price, 0);
+
+        if (user) {
+            localStorage.setItem('address_' + user.email, address);
+            // Sipariş ilk oluşturulduğunda her zaman "Hazırlanıyor" başlar.
+            const newOrder = {
+                id: "#KOD-" + Math.floor(1000 + Math.random() * 9000),
+                date: new Date().toLocaleDateString('tr-TR'),
+                status: "Hazırlanıyor",
+                items: [...cart],
+                total: totalAmount
+            };
+            let history = JSON.parse(localStorage.getItem('history_' + user.email)) || [];
+            history.unshift(newOrder);
+            localStorage.setItem('history_' + user.email, JSON.stringify(history));
+        }
+
+        alert("🚀 Siparişiniz başarıyla alındı! Durumu 'Hesabım' panelinden görebilirsiniz.");
+        cart = []; sessionStorage.removeItem('myCart'); location.reload();
     }
 
-    /* --- KULLANICI & HESABIM MANTIĞI --- */
-    function handleLogin(event) {
-        event.preventDefault();
-        const emailInput = event.target.email.value;
-        const passwordInput = event.target.password.value;
-        const storedUser = JSON.parse(localStorage.getItem('registeredUser'));
+    /* --- SİPARİŞ İPTAL TALEBİ MANTIĞI --- */
+    function cancelOrder(orderId) {
+        if(!confirm(orderId + " numaralı siparişiniz için iptal talebi oluşturmak istediğinize emin misiniz?")) return;
 
-        if (storedUser && storedUser.email === emailInput && storedUser.password === passwordInput) {
-            sessionStorage.setItem('loggedInUser', JSON.stringify(storedUser));
-            sessionStorage.removeItem('isGuest'); // Giriş yapılırsa misafirliği sil
-            updateUIForUser(storedUser.fullName);
-            closeAll();
-            updateCartDrawer(); // Sepet içindeki auth panelini gizle
-        } else {
-            alert("E-posta veya şifre hatalı!");
+        const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        if(!user) return;
+
+        let history = JSON.parse(localStorage.getItem('history_' + user.email)) || [];
+        const orderIndex = history.findIndex(o => o.id === orderId);
+
+        if(orderIndex > -1) {
+            // Anında silmek yerine durumu "İptal Talebi Alındı" yapıyoruz.
+            history[orderIndex].status = "İptal Talebi Alındı";
+            localStorage.setItem('history_' + user.email, JSON.stringify(history));
+            
+            alert("✅ İptal talebiniz sistemimize iletildi. Müşteri temsilcilerimiz en kısa sürede işleminizi sonuçlandıracaktır.");
+            populateAccountPage(); // Sayfayı yenilemeden arayüzü anında güncelle
         }
     }
 
-    function updateUIForUser(name) {
-        const loginLinks = document.querySelectorAll('a[onclick="openLogin()"]');
-        loginLinks.forEach(link => {
-            link.innerHTML = `<i class="bi bi-person-circle"></i> Hesabım`;
-            link.setAttribute('onclick', 'showOrderHistory()');
-        });
+    /* --- HESABIM PANELİ VERİ YÖNETİMİ --- */
+    function populateAccountPage() {
+        const user = JSON.parse(sessionStorage.getItem('loggedInUser'));
+        if(!user) return;
+        document.getElementById('accName').innerText = user.fullName;
+        document.getElementById('accEmail').innerText = user.email;
+        document.getElementById('accAddress').innerText = localStorage.getItem('address_' + user.email) || "Henüz kayıtlı bir adres yok.";
+        
+        const history = JSON.parse(localStorage.getItem('history_' + user.email)) || [];
+        const historyDiv = document.getElementById('orderHistoryList');
+        if(history.length === 0) {
+            historyDiv.innerHTML = '<p style="font-size:12px; color:#999; text-align:center;">İşlem kaydı yok.</p>';
+        } else {
+            historyDiv.innerHTML = history.map(order => {
+                
+                // İptal Butonu Görüntüleme Mantığı
+                const canCancel = ["İşleniyor", "Hazırlanıyor"].includes(order.status);
+                const cancelButton = canCancel ? 
+                    `<button onclick="cancelOrder('${order.id}')" style="background:none; border:none; color:#ff5252; font-size:11px; font-weight:700; cursor:pointer; padding:0; text-decoration:underline;">İptal Talebi Oluştur</button>` : '';
+
+                // Duruma Göre Renkli Etiket (Badge) Ayarı
+                let statusBg = "var(--soft-lila)";
+                let statusColor = "var(--deep-purple)";
+                
+                if(order.status === "İptal Talebi Alındı") {
+                    statusBg = "#fff0f0";
+                    statusColor = "#ff4d4d";
+                } else if (order.status === "İptal Edildi") {
+                    statusBg = "#f5f5f5";
+                    statusColor = "#888";
+                }
+
+                return `
+                <div style="background:#fff; border:1.5px solid #eee; padding:18px; border-radius:20px; margin-bottom:12px;">
+                    <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
+                        <strong style="color:var(--deep-purple);">${order.id}</strong>
+                        <span style="font-size:10px; padding:4px 8px; border-radius:8px; background:${statusBg}; color:${statusColor}; font-weight:700; text-transform:uppercase;">${order.status}</span>
+                    </div>
+                    <div style="font-size:11px; color:#999; margin-bottom:10px; display:flex; justify-content:space-between;">
+                        <span>${order.date}</span>
+                        ${cancelButton}
+                    </div>
+                    <div style="border-top:1px solid #f8f1ff; padding-top:10px;">
+                        ${order.items.map(item => `
+                            <div onclick="openProductDetail('${item.name}')" style="cursor:pointer; display:flex; justify-content:space-between; margin-bottom:5px; font-size:13px; color:#444;">
+                                <span style="text-decoration:underline;">${item.name}</span>
+                                <span style="font-weight:600;">${item.price} TL</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div style="text-align:right; margin-top:10px; font-weight:700; color:var(--accent-purple); font-size:16px;">${order.total.toLocaleString('tr-TR')} TL</div>
+                </div>
+            `}).join('');
+        }
     }
 
-    function logout() {
-        sessionStorage.removeItem('loggedInUser');
-        sessionStorage.removeItem('isGuest');
-        location.reload();
+    /* --- AUTH MANTIĞI --- */
+    function handleRegister(event) {
+        event.preventDefault();
+        const newUser = { fullName: event.target.fullName.value, email: event.target.email.value, password: event.target.password.value };
+        localStorage.setItem('registeredUser', JSON.stringify(newUser));
+        alert("Kayıt başarılı! Giriş yapabilirsiniz."); 
+        openLogin(); 
+    }
+
+    function handleLogin(event) {
+        event.preventDefault();
+        const storedUser = JSON.parse(localStorage.getItem('registeredUser'));
+        if (storedUser && storedUser.email === event.target.email.value && storedUser.password === event.target.password.value) {
+            sessionStorage.setItem('loggedInUser', JSON.stringify(storedUser));
+            sessionStorage.removeItem('isGuest'); 
+            location.reload();
+        } else { alert("Hatalı giriş verisi!"); }
+    }
+
+    function updateUIForUser(name) {
+        const nav = document.querySelector('nav');
+        if(nav && !document.getElementById('profileBtn')) {
+            nav.querySelectorAll('button.drawer-trigger').forEach(btn => btn.style.display = 'none');
+            const firstName = name.split(' ')[0];
+            const profileHtml = `<span id="profileBtn" class="drawer-trigger" onclick="openAccount()" style="color:var(--deep-purple); font-weight:700; cursor:pointer; text-transform:none; margin-right:15px;">Merhaba, ${firstName}</span><button class="drawer-trigger" onclick="logout()" style="cursor:pointer; background:none; border:none; color:#555; font-weight:600; text-transform:uppercase; font-size:11px;">Çıkış</button>`;
+            const cartWrapper = nav.querySelector('.cart-wrapper');
+            if(cartWrapper) cartWrapper.insertAdjacentHTML('beforebegin', profileHtml);
+        }
+    }
+
+    function logout() { sessionStorage.removeItem('loggedInUser'); sessionStorage.removeItem('isGuest'); location.reload(); }
+    function closeCheckout() { document.getElementById('checkoutModal').style.display = 'none'; }
+    function continueAsGuest() { sessionStorage.setItem('isGuest', 'true'); updateCartDrawer(); }
+    function toggleCardDetails() {
+        const selected = document.querySelector('input[name="paymentMethod"]:checked');
+        const details = document.getElementById('cardDetails');
+        if(details) details.style.display = (selected && selected.value === 'Kart') ? 'flex' : 'none';
     }
 
     window.addEventListener('DOMContentLoaded', () => {

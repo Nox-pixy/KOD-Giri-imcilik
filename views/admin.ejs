@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KOD. | Sistem Kontrol Paneli</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --deep-purple: #6a1b9a;
+            --accent-purple: #9c27b0;
+            --soft-lila: #f4e8ff;
+            --mid-lila: #e1bee7;
+            --text-main: #2d2d2d;
+            --bg-color: #fbf9ff;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        /* Admin Header */
+        .admin-header {
+            background: white;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            border-bottom: 2px solid var(--soft-lila);
+        }
+
+        .admin-header h1 {
+            font-family: 'Montserrat';
+            margin: 0;
+            color: var(--deep-purple);
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .back-btn {
+            padding: 10px 20px;
+            background: var(--soft-lila);
+            color: var(--deep-purple);
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .back-btn:hover { background: var(--deep-purple); color: white; }
+
+        /* İçerik Alanı */
+        .admin-container {
+            padding: 40px 50px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* İstatistik Kartları (YENİ) */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid #f0f0f0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .stat-title {
+            font-size: 13px;
+            color: #888;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--deep-purple);
+            font-family: 'Montserrat';
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.02);
+            border: 1px solid #f0f0f0;
+        }
+
+        /* Tablo Tasarımı */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px;
+            background: var(--soft-lila);
+            color: var(--deep-purple);
+            font-family: 'Montserrat';
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        th:first-child { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+        th:last-child { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+
+        td {
+            padding: 20px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+            vertical-align: middle;
+        }
+
+        /* Durum Seçici */
+        .status-select {
+            padding: 8px 12px;
+            border-radius: 10px;
+            border: 1.5px solid var(--mid-lila);
+            font-family: 'Poppins';
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--deep-purple);
+            cursor: pointer;
+            outline: none;
+            background: white;
+        }
+
+        .status-select.alert { border-color: #ff4d4d; color: #ff4d4d; }
+        .status-select:focus { border-color: var(--accent-purple); }
+
+        .update-btn {
+            padding: 8px 15px;
+            background: var(--deep-purple);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Poppins';
+            font-size: 12px;
+            transition: 0.3s;
+        }
+
+        .update-btn:hover { opacity: 0.8; transform: scale(1.05); }
+        .empty-state { text-align: center; padding: 50px; color: #888; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+    <header class="admin-header">
+        <h1>KOD. <span style="font-weight:400; color:#888;">| Root Access</span></h1>
+        <a href="/" class="back-btn">← Sisteme Dön</a>
+    </header>
+
+    <div class="admin-container">
+        
+        <!-- YENİ: İstatistik Bölümü -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-title">Toplam Ciro</div>
+                <div class="stat-value" id="statRevenue">0 TL</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Sipariş Hacmi</div>
+                <div class="stat-value" id="statOrders" style="color: var(--accent-purple);">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-title">Aktif Müşteriler</div>
+                <div class="stat-value" id="statCustomers" style="color: #333;">0</div>
+            </div>
+            <div class="stat-card" style="border-color: #ffe6e6; background: #fffcfc;">
+                <div class="stat-title" style="color: #ff4d4d;">Bekleyen İptaller</div>
+                <div class="stat-value" id="statCancels" style="color: #ff4d4d;">0</div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <h2 style="font-family: 'Montserrat'; margin-top: 0; color: var(--text-main);">Sipariş Veritabanı</h2>
+            <p style="font-size: 13px; color: #666; margin-bottom: 30px;">Tüm kullanıcıların sistemdeki işlem kayıtları, iptal talepleri ve kargo durumları buradan yönetilir.</p>
+            
+            <table id="ordersTable">
+                <thead>
+                    <tr>
+                        <th>İşlem Kodu</th>
+                        <th>Kullanıcı (E-Posta)</th>
+                        <th>Tarih</th>
+                        <th>Tutar</th>
+                        <th>Kargo Durumu</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody id="ordersBody">
+                    <!-- JavaScript ile Siparişler Buraya Çekilecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('DOMContentLoaded', loadAllOrders);
+
+        let globalOrders = [];
+
+        function loadAllOrders() {
+            globalOrders = [];
+            let totalRevenue = 0;
+            let totalOrders = 0;
+            let cancelRequests = 0;
+            let uniqueCustomers = new Set(); // Aynı müşteriyi iki kez saymamak için
+
+            const tbody = document.getElementById('ordersBody');
+
+            // LocalStorage içindeki tüm verileri tara
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                
+                if (key.startsWith('history_')) {
+                    const userEmail = key.replace('history_', ''); 
+                    const userOrders = JSON.parse(localStorage.getItem(key)) || [];
+                    
+                    userOrders.forEach(order => {
+                        globalOrders.push({
+                            email: userEmail,
+                            id: order.id,
+                            date: order.date,
+                            total: order.total,
+                            status: order.status || "Hazırlanıyor",
+                            items: order.items
+                        });
+
+                        // İstatistik Hesaplamaları
+                        totalOrders++;
+                        uniqueCustomers.add(userEmail);
+                        
+                        if (order.status === "İptal Talebi Alındı") {
+                            cancelRequests++;
+                        }
+                        
+                        // İptal edilen siparişleri ciroya dahil etme
+                        if (order.status !== "İptal Edildi") {
+                            totalRevenue += order.total;
+                        }
+                    });
+                }
+            }
+
+            // Arayüze İstatistikleri Bas
+            document.getElementById('statRevenue').innerText = totalRevenue.toLocaleString('tr-TR') + ' TL';
+            document.getElementById('statOrders').innerText = totalOrders;
+            document.getElementById('statCustomers').innerText = uniqueCustomers.size;
+            document.getElementById('statCancels').innerText = cancelRequests;
+
+            // En yeni sipariş en üstte görünsün
+            globalOrders.reverse();
+
+            if (globalOrders.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="empty-state">Sistemde henüz kayıtlı bir sipariş bulunmuyor.</td></tr>`;
+                return;
+            }
+
+            // Tabloyu oluştur
+            tbody.innerHTML = globalOrders.map(order => {
+                // İptal talebi olan select kutusunu kırmızı yapmak için sınıf ekliyoruz
+                const selectClass = order.status === "İptal Talebi Alındı" ? "status-select alert" : "status-select";
+
+                return `
+                <tr>
+                    <td style="font-weight: 700; color: var(--deep-purple);">${order.id}</td>
+                    <td style="color: #555;">${order.email}</td>
+                    <td style="color: #888;">${order.date}</td>
+                    <td style="font-weight: 600;">${order.total.toLocaleString('tr-TR')} TL</td>
+                    <td>
+                        <select class="${selectClass}" id="status_${order.id}">
+                            <option value="İşleniyor" ${order.status === 'İşleniyor' ? 'selected' : ''}>İşleniyor</option>
+                            <option value="Hazırlanıyor" ${order.status === 'Hazırlanıyor' ? 'selected' : ''}>Hazırlanıyor</option>
+                            <option value="Kargoya Verildi" ${order.status === 'Kargoya Verildi' ? 'selected' : ''}>Kargoya Verildi</option>
+                            <option value="Teslimat Aşamasında" ${order.status === 'Teslimat Aşamasında' ? 'selected' : ''}>Teslimat Aşamasında</option>
+                            <option value="Teslim Edildi" ${order.status === 'Teslim Edildi' ? 'selected' : ''}>Teslim Edildi</option>
+                            <option value="İptal Talebi Alındı" ${order.status === 'İptal Talebi Alındı' ? 'selected' : ''} style="color:red;">İptal Talebi Alındı</option>
+                            <option value="İptal Edildi" ${order.status === 'İptal Edildi' ? 'selected' : ''}>İptal Edildi</option>
+                        </select>
+                    </td>
+                    <td>
+                        <button class="update-btn" onclick="updateOrderStatus('${order.email}', '${order.id}')">Güncelle</button>
+                    </td>
+                </tr>
+            `}).join('');
+        }
+
+        // Seçilen siparişin durumunu güncelleyen fonksiyon
+        function updateOrderStatus(email, orderId) {
+            const newStatus = document.getElementById(`status_${orderId}`).value;
+            const storageKey = 'history_' + email;
+            let userHistory = JSON.parse(localStorage.getItem(storageKey));
+            
+            if (userHistory) {
+                const orderIndex = userHistory.findIndex(o => o.id === orderId);
+                if (orderIndex > -1) {
+                    userHistory[orderIndex].status = newStatus;
+                    localStorage.setItem(storageKey, JSON.stringify(userHistory));
+                    
+                    alert(`🚀 ${orderId} numaralı siparişin durumu "${newStatus}" olarak güncellendi!`);
+                    
+                    // İstatistiklerin güncellenmesi için sayfayı yeniden yüklemeden fonksiyonu çağır
+                    loadAllOrders();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>KOD | Yeni Kayıt</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap" rel="stylesheet">
+    <style>
+        body { margin: 0; display: flex; height: 100vh; font-family: 'Poppins', sans-serif; }
+        
+        /* Sol taraftaki görsel. Slider görsellerinden birini kullandım, istersen ismini değiştirebilirsin */
+        .side-image { flex: 1.2; background: url('/assets/KOD urunler/slider1.png') center/cover; }
+        
+        .form-side { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 8%; background: #fff; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; background: #fafafa; box-sizing: border-box; }
+        button { background: #8b5cf6; color: white; border: none; padding: 18px; border-radius: 15px; cursor: pointer; font-weight: 600; margin-top: 20px; transition: 0.3s; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+        
+        .back { position: absolute; top: 30px; right: 30px; text-decoration: none; color: #8b5cf6; font-weight: 600; }
+        .login-link { margin-top: 20px; text-align: center; color: #777; font-size: 14px; }
+        .login-link a { color: #8b5cf6; text-decoration: none; font-weight: 600; }
+    </style>
+</head>
+<body>
+    <a href="/" class="back">← Mağazaya Dön</a>
+    <div class="side-image"></div>
+    <div class="form-side">
+        <h1 style="color: #333;">Sisteme Katıl.</h1>
+        <p style="color: #777; margin-bottom: 30px;">Yeni bir arayüz ve pürüzsüz bir cilt deneyimi için kayıt oluşturun.</p>
+        
+        <!-- Form aksiyonu yerine JS fonksiyonumuzu çağırdık -->
+        <form onsubmit="handleStandaloneRegister(event)">
+            <input type="text" name="fullName" placeholder="Ad Soyad" required>
+            <input type="email" name="email" placeholder="E-posta Adresiniz" required>
+            <input type="password" name="password" placeholder="Şifre Belirleyin" required>
+            <button type="submit">Sisteme_Kayıt_Ol()</button>
+        </form>
+
+        <div class="login-link">
+            Zaten güncel bir sürümünüz var mı? <a href="/login">Giriş Yap</a>
+        </div>
+    </div>
+
+    <script>
+        function handleStandaloneRegister(event) {
+            event.preventDefault(); // Sayfanın POST işlemiyle yenilenmesini engeller
+            
+            const fullName = event.target.fullName.value;
+            const email = event.target.email.value;
+            const password = event.target.password.value;
+            
+            // Kullanıcı bilgilerini bir obje olarak toparlıyoruz
+            const newUser = {
+                fullName: fullName,
+                email: email,
+                password: password
+            };
+            
+            // Veritabanı yerine tarayıcı hafızasına (localStorage) kaydediyoruz
+            localStorage.setItem('registeredUser', JSON.stringify(newUser));
+            
+            alert("Kayıt başarılı! Aramıza hoş geldin " + fullName + ". Şimdi giriş sayfasına yönlendiriliyorsun.");
+            
+            // Kayıt olduktan sonra giriş sayfasına (login.ejs) atıyoruz
+            window.location.href = '/login'; 
+        }
+    </script>
+</body>
+</html>

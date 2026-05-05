@@ -238,8 +238,21 @@ app.get('/', (req, res) => {
     res.render('index', { products: products });
 });
 
+// EKLENEN KISIM: Giriş ve Kayıt Sayfaları İçin Yönlendirmeler
+app.get('/login', (req, res) => {
+    res.render('login');
+});
+
+app.get('/register', (req, res) => {
+    res.render('register');
+});
+
 // Sunucuyu başlat
 const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`🚀 Sistem aktif: http://localhost:${PORT}`);
+});
+// Admin Paneli Rotası
+app.get('/admin', (req, res) => {
+    res.render('admin');
 });

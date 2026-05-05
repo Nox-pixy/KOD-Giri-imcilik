@@ -12,14 +12,15 @@
                 <h3>Teslimat ve Ödeme</h3>
                 <form id="orderForm" onsubmit="processOrder(event)">
                     <div class="input-group">
-                        <input type="text" placeholder="Tam Adınız" required>
+                        <input type="text" id="customerName" placeholder="Tam Adınız" required>
                     </div>
                     <div class="input-group">
-                        <textarea placeholder="Teslimat Adresi" required style="width: 100%; height: 80px; padding: 15px; border-radius: 12px; border: 1.5px solid #eee; font-family: 'Poppins';"></textarea>
+                        <textarea id="deliveryAddress" placeholder="Teslimat Adresi" required style="width: 100%; height: 80px; padding: 15px; border-radius: 12px; border: 1.5px solid #eee; font-family: 'Poppins';"></textarea>
                     </div>
                     <div class="card-info" style="display: flex; gap: 10px; margin-top: 10px;">
-                        <input type="text" placeholder="Kart No (16 Hane)" style="flex: 2; padding: 15px; border-radius: 12px; border: 1.5px solid #eee;">
-                        <input type="text" placeholder="CVC" style="flex: 1; padding: 15px; border-radius: 12px; border: 1.5px solid #eee;">
+                        <!-- Kredi kartı ve CVC için basit maxlength sınırlandırmaları eklendi -->
+                        <input type="text" id="cardNumber" placeholder="Kart No (16 Hane)" required maxlength="16" style="flex: 2; padding: 15px; border-radius: 12px; border: 1.5px solid #eee;">
+                        <input type="text" id="cardCVC" placeholder="CVC" required maxlength="3" style="flex: 1; padding: 15px; border-radius: 12px; border: 1.5px solid #eee;">
                     </div>
                     <button type="submit" class="btn btn-full" style="background: var(--deep-purple); color: white; margin-top: 20px;">Siparişi Tamamla</button>
                 </form>
@@ -55,3 +56,43 @@
     .close-checkout { font-size: 40px; cursor: pointer; color: #ccc; }
     .checkout-summary-section { background: #fbf9ff; padding: 25px; border-radius: 20px; }
 </style>
+
+<script>
+    // Modal kapatma fonksiyonu
+    function closeCheckout() {
+        document.getElementById('checkoutModal').style.display = 'none';
+    }
+
+    // Sahte sipariş işleme (Veritabanı olmadan)
+    function processOrder(event) {
+        event.preventDefault(); // Formun sayfayı yenilemesini engeller
+
+        const name = document.getElementById('customerName').value;
+        
+        // Başarılı sipariş uyarısı
+        alert("Tebrikler " + name + "! Siparişin başarıyla alındı.");
+        
+        // Sepeti temizle (Eğer verileri localStorage'da 'cart' anahtarıyla tutuyorsan)
+        localStorage.removeItem('cart'); 
+        
+        // Formu sıfırla ve modalı kapat
+        document.getElementById('orderForm').reset();
+        closeCheckout();
+        
+        // Sağ üstteki sepet sayacını sıfırla (Eğer sayfanda id'si cartCount olan bir eleman varsa)
+        const cartBadge = document.getElementById('cartCount');
+        if(cartBadge) {
+            cartBadge.innerText = "0";
+        }
+
+        // Özeti temizle
+        const summaryList = document.getElementById('checkoutSummaryList');
+        if(summaryList) {
+            summaryList.innerHTML = "";
+        }
+        const totalText = document.getElementById('checkoutTotalText');
+        if(totalText) {
+            totalText.innerText = "0 TL";
+        }
+    }
+</script>

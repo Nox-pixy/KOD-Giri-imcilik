@@ -6,24 +6,22 @@
         </a>
     </div>
 
-    <!-- Minimalist Arama Çubuğu: Burası artık arama motorunun kalbi -->
+    <!-- Minimalist Arama Çubuğu -->
     <div class="search-container">
         <div class="search-wrapper">
-            <!-- Stil dosyasındaki mor ikon -->
             <span class="search-icon">⚲</span>
-            <!-- placeholder boş, onkeyup fonksiyonu footer'daki JS ile bağlı -->
             <input type="text" 
                    class="search-input" 
                    id="searchInput" 
-                   placeholder="" 
+                   placeholder="Sistemde ürün ara..." 
                    onkeyup="searchProducts()"
                    autocomplete="off">
         </div>
     </div>
 
-    <!-- Kullanıcı Panelleri -->
+    <!-- Sadece Kullanıcı ve Sepet -->
     <nav>
-        <!-- Katalog kaldırıldı, alan ferahladı -->
+        <!-- Auth Butonları -->
         <button class="drawer-trigger" onclick="openLogin()">Giriş</button>
         <button class="drawer-trigger" onclick="openRegister()">Kaydol</button>
         

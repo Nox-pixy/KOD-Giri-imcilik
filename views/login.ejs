@@ -8,7 +8,7 @@
         body { margin: 0; display: flex; height: 100vh; font-family: 'Poppins', sans-serif; }
         .side-image { flex: 1.2; background: url('/assets/KOD urunler/print(sleep)_2.jpeg') center/cover; }
         .form-side { flex: 1; display: flex; flex-direction: column; justify-content: center; padding: 0 8%; background: #fff; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; background: #fafafa; }
+        input { width: 100%; padding: 15px; margin: 10px 0; border: 1px solid #eee; border-radius: 15px; background: #fafafa; box-sizing: border-box; }
         button { background: #8b5cf6; color: white; border: none; padding: 18px; border-radius: 15px; cursor: pointer; font-weight: 600; margin-top: 20px; }
         .back { position: absolute; top: 30px; right: 30px; text-decoration: none; color: #8b5cf6; font-weight: 600; }
     </style>
@@ -19,11 +19,37 @@
     <div class="form-side">
         <h1 style="color: #333;">Tekrar Hoş Geldin.</h1>
         <p style="color: #777; margin-bottom: 30px;">Cilt verilerinizi güncellemek için sisteme giriş yapın.</p>
-        <form action="/login" method="POST">
-            <input type="email" placeholder="E-posta Adresiniz" required>
-            <input type="password" placeholder="Şifreniz" required>
+        
+        <!-- Form aksiyonu yerine JS fonksiyonumuzu çağırdık -->
+        <form onsubmit="handleStandaloneLogin(event)">
+            <!-- JS'in yakalayabilmesi için name nitelikleri eklendi -->
+            <input type="email" name="email" placeholder="E-posta Adresiniz" required>
+            <input type="password" name="password" placeholder="Şifreniz" required>
             <button type="submit">Sisteme_Giriş_Yap()</button>
         </form>
     </div>
+
+    <script>
+        function handleStandaloneLogin(event) {
+            event.preventDefault(); // Sayfanın POST işlemiyle yenilenmesini engeller
+            
+            const emailInput = event.target.email.value;
+            const passwordInput = event.target.password.value;
+            
+            // Kayıt (Register) çekmecesinden/sayfasından kaydettiğimiz kullanıcıyı çekiyoruz
+            const storedUser = JSON.parse(localStorage.getItem('registeredUser'));
+
+            if (storedUser && storedUser.email === emailInput && storedUser.password === passwordInput) {
+                // Giriş başarılıysa oturum aç
+                sessionStorage.setItem('loggedInUser', JSON.stringify(storedUser));
+                sessionStorage.removeItem('isGuest'); 
+                
+                alert("Sisteme başarıyla giriş yapıldı! Ana sayfaya yönlendiriliyorsunuz.");
+                window.location.href = '/'; // Doğrudan ana sayfaya atar
+            } else {
+                alert("Hatalı e-posta veya şifre! Eğer hesabınız yoksa önce kayıt olmalısınız.");
+            }
+        }
+    </script>
 </body>
 </html>
